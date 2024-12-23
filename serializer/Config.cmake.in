@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Include the generated file that contains the exported targets
+# helps cmake's find_package() cmd to find the project
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+
+# You can also handle required dependencies here, for example:
+# find_dependency(SomeOtherLibrary REQUIRED)
+
+check_required_components("@PROJECT_NAME@")

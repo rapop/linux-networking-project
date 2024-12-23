@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.14)
 project(linux-networking-project)
 
 # enable CTest testing
@@ -10,6 +11,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # add_subdirectory(client)
-# add_subdirectory(networking)
-# add_subdirectory(server)
 add_subdirectory(serializer)
+add_subdirectory(networking)
+add_subdirectory(notifier-app)
+# add_subdirectory(server)
+# add_subdirectory(serializer)

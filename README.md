@@ -1,5 +1,8 @@
 # networking
 
+## Prerequists
+- GCC 13
+
 ## Build
 `chmod +x do-build.sh`
 `./do-build.sh`
@@ -19,7 +22,8 @@
 </details>
 
 ## Test
-
+`./build/networking_server 51715`
+`./build/networking_client localhost 51715`
 
 ## Notes
 

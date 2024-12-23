@@ -32,7 +32,7 @@ std::vector<uint8_t> pack(const DataType& data)
   return buffer;
 }
 
-MsgType unpack_type(const std::vector<uint8_t>& packet)
+MsgType unpackType(const std::vector<uint8_t>& packet)
 {
   if (packet.empty()) 
   {
@@ -44,7 +44,7 @@ MsgType unpack_type(const std::vector<uint8_t>& packet)
 template <typename DataType>
 DataType unpack(const std::vector<uint8_t>& packet)
 {
-  MsgType msg_type = unpack_type(packet);
+  MsgType msg_type = unpackType(packet);
   if (ToMsgType<DataType> != msg_type)
   {
     throw std::runtime_error("Trying to unpack packet to wrong type.");
@@ -64,7 +64,7 @@ DataType unpack(const std::vector<uint8_t>& packet)
 }
 
 template <typename DataType>
-std::vector<uint8_t> pack_vector(const std::vector<DataType>& data)
+std::vector<uint8_t> packVector(const std::vector<DataType>& data)
 {
   const uint8_t message_length = sizeof(DataType)*data.size();
 
@@ -85,9 +85,9 @@ std::vector<uint8_t> pack_vector(const std::vector<DataType>& data)
 }
 
 template <typename DataType>
-std::vector<DataType> unpack_vector(const std::vector<uint8_t>& packet)
+std::vector<DataType> unpackVector(const std::vector<uint8_t>& packet)
 {
-  MsgType msg_type = unpack_type(packet);
+  MsgType msg_type = unpackType(packet);
   if (ToMsgType<DataType> != msg_type)
   {
     throw std::runtime_error("Trying to unpack packet to wrong type.");

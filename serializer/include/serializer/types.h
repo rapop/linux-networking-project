@@ -7,8 +7,16 @@ enum class MsgType
   DoubleType = 0,
   CharType,
   DoubleVectorType,
+  CharVectorType,
 };
 
+/*
+  These templates allow association between the enum MsgType and the type like a map.
+  For example,
+  double my_var = MsgTypeTrait<DoubleType>;
+  DoubleType my_var = ToMsgType<double>;
+*/
+ 
 template<MsgType T>
 struct MsgTypeTraits; 
 
@@ -34,6 +42,12 @@ struct MsgTypeTraits<MsgType::DoubleVectorType>
 };
 
 template<>
+struct MsgTypeTraits<MsgType::CharVectorType> 
+{
+    using type = std::vector<char>;
+};
+
+template<>
 struct MsgTypeEnumTraits<double> 
 {
     static constexpr MsgType value = MsgType::DoubleType;
@@ -49,6 +63,12 @@ template<>
 struct MsgTypeEnumTraits<std::vector<double>> 
 {
     static constexpr MsgType value = MsgType::DoubleVectorType;
+};
+
+template<>
+struct MsgTypeEnumTraits<std::vector<char>> 
+{
+    static constexpr MsgType value = MsgType::CharVectorType;
 };
 
 template<MsgType T>
