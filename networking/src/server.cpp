@@ -14,6 +14,10 @@
 
 namespace networking {
 
+Server::Server(ISocketCommunicator& socket_communicator) 
+: socket_communicator_(socket_communicator)
+{}
+
 void Server::BindAndListen(int port_number)
 {
   // AF_INET for the internet domain, chosing IPv4 Internet protocols
