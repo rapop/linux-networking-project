@@ -8,9 +8,9 @@ namespace networking {
 struct IPublisher
 {
   virtual ~IPublisher() = default;
-  virtual void SendPositionCommand(const std::vector<double>& position);
-  virtual void SendStopSubscriber(const std::string& subscriber_name);
-  virtual bool StopPositionStream();
+  virtual void SendPositionCommand(const std::vector<double>& position) = 0;
+  virtual void SendStopSubscriber(const std::string& subscriber_name) = 0;
+  virtual bool StopPositionStream() = 0;
 };
 
 } // namespace networking

@@ -2,7 +2,7 @@
 
 mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=../install ..
+cmake ..
 cd ..
 cmake --build ./build
 cd build && ctest --output-on-failure
