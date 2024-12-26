@@ -1,5 +1,7 @@
 #include <networking/publisher.h>
 
+#include <iostream>
+
 #include "cmd_types.h"
 #include <serializer/serializer.h>
 
@@ -25,6 +27,7 @@ bool Publisher::StopPositionStream()
   if (serializer::unpackType(packet) == serializer::MsgType::CharType &&
       serializer::unpack<char>(packet) == static_cast<char>(CmdTypes::StopPositionStream)) 
   {
+    std::cout << "Received request to stop position stream." << std::endl;
     return true;
   }
 

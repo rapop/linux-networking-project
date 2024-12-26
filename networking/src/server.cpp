@@ -2,9 +2,11 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mutex>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -18,6 +20,14 @@ Server::Server(ISocketCommunicator& socket_communicator)
 : socket_communicator_(socket_communicator)
 {}
 
+Server::~Server()
+{
+  if (socket_file_descriptor_ >= 0)
+  {
+    close(socket_file_descriptor_);
+  }
+}
+
 void Server::BindAndListen(int port_number)
 {
   // AF_INET for the internet domain, chosing IPv4 Internet protocols
@@ -25,7 +35,7 @@ void Server::BindAndListen(int port_number)
   int binded_socket_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
   if (binded_socket_file_descriptor < 0)
   {
-      exit_with_error({.msg = "ERROR opening socket", .exit_code = 1});
+    exit_with_error({.msg = "ERROR opening socket", .exit_code = 1});
   }
 
   sockaddr_in server_address;
@@ -43,7 +53,7 @@ void Server::BindAndListen(int port_number)
   // Binds a socket to an address
   if (bind(binded_socket_file_descriptor, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
   {
-      exit_with_error({.msg = "ERROR on binding", .exit_code = 1});
+    exit_with_error({.msg = "ERROR on binding", .exit_code = 1});
   }
 
   // The listen system call allows the process to listen on the socket for connections.
@@ -66,22 +76,24 @@ void Server::BindAndListen(int port_number)
   
   if (socket_file_descriptor_ < 0)
   {
-      exit_with_error({.msg = "ERROR on accept", .exit_code = 1});
+    exit_with_error({.msg = "ERROR on accept", .exit_code = 1});
   }
 }
 
 std::vector<uint8_t> Server::Read() const
 {
+  std::lock_guard<std::mutex> lock(read_mutex_);
   if (socket_file_descriptor_ == -1)
   {
     throw std::runtime_error("Socket has not been setup for reading yet.");
- }
+  }
   
   return socket_communicator_.Read(socket_file_descriptor_);
 }
 
 void Server::Write(const std::vector<uint8_t>& packet) const
 {
+  std::lock_guard<std::mutex> lock(write_mutex_);
   if (socket_file_descriptor_ == -1)
   {
     throw std::runtime_error("Socket has not been setup for writing yet.");

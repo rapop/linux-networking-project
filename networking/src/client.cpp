@@ -2,6 +2,8 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <mutex>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +16,18 @@
 #include "utils.h"
 
 namespace networking {
+
+Client::Client(ISocketCommunicator& socket_communicator)
+: socket_communicator_(socket_communicator)
+{}
+
+Client::~Client()
+{
+  if (socket_file_descriptor_ >= 0)
+  {
+    close(socket_file_descriptor_);
+  }
+}
 
 void Client::Connect(const std::string& address, int port_number)
 {
@@ -44,12 +58,11 @@ void Client::Connect(const std::string& address, int port_number)
   if (connect(socket_file_descriptor_,(struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
       exit_with_error({.msg = "ERROR connecting", .exit_code = 1});
   }
-
-  // printf("Please enter the message: ");
 }
 
 std::vector<uint8_t> Client::Read() const
 {
+  std::lock_guard<std::mutex> lock(read_mutex_);
   if (socket_file_descriptor_ == -1)
   {
     throw std::runtime_error("Socket has not been setup for reading yet.");
@@ -60,6 +73,7 @@ std::vector<uint8_t> Client::Read() const
 
 void Client::Write(const std::vector<uint8_t>& packet) const
 {
+  std::lock_guard<std::mutex> lock(write_mutex_);
   if (socket_file_descriptor_ == -1)
   {
     throw std::runtime_error("Socket has not been setup for writing yet.");

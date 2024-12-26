@@ -22,8 +22,8 @@
 </details>
 
 ## Test
-`./build/networking_server 51715`
-`./build/networking_client localhost 51715`
+`./build/notifier-app/notifier-app 51715`
+`./build/publisher-app/publisher-app localhost 51715`
 
 ## Notes
 

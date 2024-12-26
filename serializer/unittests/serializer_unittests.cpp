@@ -37,4 +37,13 @@ TEST(serializer_unittests, pack_unpack_char_type)
   EXPECT_EQ(type, serializer::MsgType::CharType);
 }
 
+TEST(serializer_unittests, pack_unpack_vector_char_type)
+{
+  const std::string str = "test";
+  const std::vector<char> expected_val(str.begin(), str.end());
+  const std::vector<uint8_t> packed_data = serializer::packVector<char>(expected_val);
+  const serializer::MsgType type = serializer::unpackType(packed_data);
+  EXPECT_EQ(type, serializer::MsgType::CharVectorType);
+}
+
 } // namespace serializer_unittests
