@@ -5,6 +5,7 @@
 
 ## Build
 `chmod +x do-build.sh`
+
 `./do-build.sh`
 
 <details>
@@ -57,11 +58,6 @@ The address of a socket in the Internet domain consists of the Internet address 
 There is a lot less overhead associated with a datagram socket because connections do not need to be established and broken down, and packets do not need to be acknowledged. This is why datagram sockets are often used when the service to be provided is short, such as a time-of-day service.
 
 ## Improvements
-### Serializer
-
-Another option is to use templates and a switch case in a single function that handles all the serialization for all types.
-Might be simpler...
-
 ### Big Endian, Little Endian
 
 To keep in mind when working on different architecture. The most representative bit comes first and vice-versa. 
