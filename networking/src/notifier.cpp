@@ -42,7 +42,7 @@ namespace networking
     else if (packet_type == serializer::MsgType::DoubleVectorType)
     {
       const std::vector<double> position = serializer::unpackVector<double>(packet);
-      NotifySubscribers(position);
+      NotifySubscribers<std::vector<double>>(position);
     }
     else
     {
@@ -53,14 +53,6 @@ namespace networking
   void Notifier::SendAndStopStream()
   {
     server_.Write(serializer::pack<char>(static_cast<char>(CmdTypes::StopPositionStream)));
-  }
-
-  void Notifier::NotifySubscribers(const std::vector<double>& position)
-  {
-    for (const auto& subscriber : subscribers_) 
-    {
-      subscriber.second.get().Callback(position);
-    }
   }
 
   void Notifier::AddSubscriber(const ISubscriber& subscriber, const std::string& subscriber_name)

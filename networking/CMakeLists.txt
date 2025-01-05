@@ -6,7 +6,6 @@ add_library(${PROJECT_NAME} STATIC
   src/publisher.cpp
   src/server.cpp
   src/socket_communicator.cpp
-  src/subscriber.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

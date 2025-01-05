@@ -1,16 +1,16 @@
-#include <networking/subscriber.h>
+#pragma once
 
+#include <any>
 #include <chrono>
-#include <format>
 #include <iostream>
+#include <string>
+#include <vector>
 
-namespace networking {
+namespace callbacks {
 
-Subscriber::Subscriber(const std::string subscriber_name) : subscriber_name_(subscriber_name)
-{}
-
-void Subscriber::Callback(const std::vector<double>& position) const
+inline void double_vector_callback(const std::string& name, const std::any& any_data)
 {
+  const auto position = std::any_cast<const std::vector<double>&>(any_data);
   const auto now = std::chrono::system_clock::now();
   const std::time_t now_t = std::chrono::system_clock::to_time_t(now);
   const std::tm* now_tm = std::localtime(&now_t);
@@ -23,7 +23,7 @@ void Subscriber::Callback(const std::vector<double>& position) const
   const auto us = std::chrono::duration_cast<std::chrono::microseconds>(epoch).count() % 1000000;
 
   std::cout << std::format("Position received for subscriber named {} at system clock time {}{} : ", 
-                                subscriber_name_,
+                                name,
                                 time_str,
                                 us);
   for (const auto& val: position)
@@ -31,6 +31,6 @@ void Subscriber::Callback(const std::vector<double>& position) const
     std::cout << val << " ";
   }
   std::cout << std::endl;
-}
+};
 
-} // namespace networking
+} // namespace callbacks

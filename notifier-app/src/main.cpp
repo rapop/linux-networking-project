@@ -1,7 +1,7 @@
-#include <chrono>
 #include <iostream>
 #include <thread>
 
+#include <networking/callbacks.h>
 #include <networking/notifier.h>
 #include <networking/server.h>
 #include <networking/socket_communicator.h>
@@ -24,8 +24,8 @@ int main(int argc, char* argv[])
 
   server.BindAndListen(port_number);
 
-  networking::Subscriber subscriberA("SubscriberA");
-  networking::Subscriber subscriberB("SubscriberB");
+  networking::Subscriber<std::vector<double>> subscriberA("SubscriberA", callbacks::double_vector_callback);
+  networking::Subscriber<std::vector<double>> subscriberB("SubscriberB", callbacks::double_vector_callback);
 
   networking::Notifier notifier(server);
   notifier.AddSubscriber(subscriberA, "SubscriberA");

@@ -26,9 +26,19 @@
 
 ## Test
 
+Run the notifier-app (server)
+
 `./build/notifier-app/notifier-app 51715`
 
+Run the publisher-app (client)
+
 `./build/publisher-app/publisher-app localhost 51715`
+
+Usage:
+
+In the publisher-app CLI enter `stop` and press enter. Then enter the subscriber name and press enter.
+
+In the notifier-app CLI enter `stop` to send a stop request to the publisher for sending joint commands.
 
 ## Notes
 
@@ -66,3 +76,11 @@ There is a lot less overhead associated with a datagram socket because connectio
 ### Big Endian, Little Endian
 
 To keep in mind when working on different architecture. The most representative bit comes first and vice-versa. 
+
+### Reconnection, heartbeats
+
+We could add a permanent heartbeats stream, so that when one side disconnect, the other side will enter into reconnection mode.
+
+### Msg types
+
+Msg types should ideally represent concrete commands like `PositionCommandMsg` instead of `DoubleVectorType` if we want to support multiple msg that should be deserialized as a vector of doubles. We should embed this command in the packet instead.  

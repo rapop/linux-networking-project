@@ -57,7 +57,8 @@ DataType unpack(const std::vector<uint8_t>& packet)
   offset += sizeof(message_length);
 
   DataType data;
-  // we don't really need the message length if we know the type?
+  // we don't really need the message length if we know the type because we have the length 
+  // with sizeof(DataType), that's how it's packed
   std::memcpy(&data, packet.data() + offset, message_length);
 
   return data;

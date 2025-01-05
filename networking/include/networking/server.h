@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <optional>
 
 #include <networking/i_server.h>
 #include <networking/i_socket_communicator.h>
@@ -17,7 +18,7 @@ public:
   void Write(const std::vector<uint8_t>& packet) const override;
 private:
   ISocketCommunicator& socket_communicator_;
-  int socket_file_descriptor_ = -1;
+  std::optional<int> socket_file_descriptor_;
   mutable std::mutex read_mutex_;
   mutable std::mutex write_mutex_;
 };

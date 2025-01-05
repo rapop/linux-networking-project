@@ -22,9 +22,10 @@ Server::Server(ISocketCommunicator& socket_communicator)
 
 Server::~Server()
 {
-  if (socket_file_descriptor_ >= 0)
+  if (socket_file_descriptor_.has_value() &&  
+      socket_file_descriptor_.value() >= 0)
   {
-    close(socket_file_descriptor_);
+    close(socket_file_descriptor_.value());
   }
 }
 
@@ -74,7 +75,7 @@ void Server::BindAndListen(int port_number)
   socket_file_descriptor_ = accept(binded_socket_file_descriptor, (struct sockaddr *)&client_address, 
                                       &client_address_length);
   
-  if (socket_file_descriptor_ < 0)
+  if (socket_file_descriptor_.value() < 0)
   {
     exit_with_error({.msg = "ERROR on accept", .exit_code = 1});
   }
@@ -83,23 +84,23 @@ void Server::BindAndListen(int port_number)
 std::vector<uint8_t> Server::Read() const
 {
   std::lock_guard<std::mutex> lock(read_mutex_);
-  if (socket_file_descriptor_ == -1)
+  if (!socket_file_descriptor_.has_value())
   {
     throw std::runtime_error("Socket has not been setup for reading yet.");
   }
   
-  return socket_communicator_.Read(socket_file_descriptor_);
+  return socket_communicator_.Read(socket_file_descriptor_.value());
 }
 
 void Server::Write(const std::vector<uint8_t>& packet) const
 {
   std::lock_guard<std::mutex> lock(write_mutex_);
-  if (socket_file_descriptor_ == -1)
+  if (!socket_file_descriptor_.has_value())
   {
     throw std::runtime_error("Socket has not been setup for writing yet.");
   }
 
-  socket_communicator_.Write(socket_file_descriptor_, packet);
+  socket_communicator_.Write(socket_file_descriptor_.value(), packet);
 }
 
 } // namespace networking

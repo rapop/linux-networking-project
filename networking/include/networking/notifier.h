@@ -16,7 +16,18 @@ public:
   void SendAndStopStream();
   void AddSubscriber(const ISubscriber& subscriber, const std::string& subscriber_name);
 private:
-  void NotifySubscribers(const std::vector<double>& position);
+  template<typename T>
+  void NotifySubscribers(const T& data)
+  {
+    for (const auto& subscriber : subscribers_)
+    {
+      if (subscriber.second.get().Type() == typeid(T))
+      {
+        subscriber.second.get().Callback(data);
+      }
+    }
+  }
+  
   IServer& server_;
   std::unordered_map<std::string, std::reference_wrapper<const ISubscriber>> subscribers_;
 };
