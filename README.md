@@ -26,9 +26,19 @@
 
 ## Test
 
+Run the notifier-app (server)
+
 `./build/notifier-app/notifier-app 51715`
 
+Run the publisher-app (client)
+
 `./build/publisher-app/publisher-app localhost 51715`
+
+Usage:
+
+In the publisher-app CLI enter `stop` and press enter. Then enter the subscriber name and press enter.
+
+In the notifier-app CLI enter `stop` to send a stop request to the publisher for sending joint commands.
 
 ## Notes
 
@@ -66,3 +76,31 @@ There is a lot less overhead associated with a datagram socket because connectio
 ### Big Endian, Little Endian
 
 To keep in mind when working on different architecture. The most representative bit comes first and vice-versa. 
+
+### Reconnection, heartbeats
+
+We could add a permanent heartbeats stream, so that when one side disconnect, the other side will enter into reconnection mode.
+
+### More flexibility for the subscribers
+
+In the current design, when we want to add a new subscriber type, we need to add a new type to the variant and create a new subclass. 
+
+Another possibility is to use `std::any` and to inject callback functions into the `Subscriber` class. When calling the `Callback` function, we would simply forward the work to the injected function. We can store the callbacks functions definitions in seperate files and include them when we want to inject them.
+
+This would look a bit like this:
+
+```
+class GenericSubscriber : public ISubscriber
+{
+private:
+  std::function<void(const std::any&)> func_;
+
+public:
+  GenericSubscriber(std::function<void(const std::any&)> func) : func_(std::move(func)) {}
+
+  void Callback(const std::any& data) const override
+  {
+    func_(data);
+  }
+};
+```

@@ -1,4 +1,4 @@
-#include <networking/subscriber.h>
+#include <networking/double_vector_subscriber.h>
 
 #include <chrono>
 #include <format>
@@ -6,10 +6,10 @@
 
 namespace networking {
 
-Subscriber::Subscriber(const std::string subscriber_name) : subscriber_name_(subscriber_name)
+DoubleVectorSubscriber::DoubleVectorSubscriber(const std::string subscriber_name) : subscriber_name_(subscriber_name)
 {}
 
-void Subscriber::Callback(const std::vector<double>& position) const
+void DoubleVectorSubscriber::Callback(const std::vector<double>& position) const
 {
   const auto now = std::chrono::system_clock::now();
   const std::time_t now_t = std::chrono::system_clock::to_time_t(now);

@@ -23,9 +23,10 @@ Client::Client(ISocketCommunicator& socket_communicator)
 
 Client::~Client()
 {
-  if (socket_file_descriptor_ >= 0)
+  if (socket_file_descriptor_.has_value() &&  
+      socket_file_descriptor_.value() >= 0)
   {
-    close(socket_file_descriptor_);
+    close(socket_file_descriptor_.value());
   }
 }
 
@@ -35,7 +36,7 @@ void Client::Connect(const std::string& address, int port_number)
   // in this case another io resource that is a network socket
   socket_file_descriptor_ = socket(AF_INET, SOCK_STREAM, 0);
 
-  if (socket_file_descriptor_ < 0) {
+  if (socket_file_descriptor_.value() < 0) {
       exit_with_error({.msg = "ERROR opening socket", .exit_code = 1});
   }
 
@@ -55,7 +56,7 @@ void Client::Connect(const std::string& address, int port_number)
         server->h_length);
   server_address.sin_port = htons(port_number);
   
-  if (connect(socket_file_descriptor_,(struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
+  if (connect(socket_file_descriptor_.value(),(struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
       exit_with_error({.msg = "ERROR connecting", .exit_code = 1});
   }
 }
@@ -63,23 +64,23 @@ void Client::Connect(const std::string& address, int port_number)
 std::vector<uint8_t> Client::Read() const
 {
   std::lock_guard<std::mutex> lock(read_mutex_);
-  if (socket_file_descriptor_ == -1)
+  if (!socket_file_descriptor_.has_value())
   {
     throw std::runtime_error("Socket has not been setup for reading yet.");
   }
   
-  return socket_communicator_.Read(socket_file_descriptor_);
+  return socket_communicator_.Read(socket_file_descriptor_.value());
 }
 
 void Client::Write(const std::vector<uint8_t>& packet) const
 {
   std::lock_guard<std::mutex> lock(write_mutex_);
-  if (socket_file_descriptor_ == -1)
+  if (!socket_file_descriptor_.has_value())
   {
     throw std::runtime_error("Socket has not been setup for writing yet.");
   }
 
-  socket_communicator_.Write(socket_file_descriptor_, packet);
+  socket_communicator_.Write(socket_file_descriptor_.value(), packet);
 }
 
 } // namespace networking

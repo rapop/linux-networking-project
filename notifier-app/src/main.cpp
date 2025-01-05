@@ -1,11 +1,12 @@
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 
+#include <networking/double_vector_subscriber.h>
 #include <networking/notifier.h>
 #include <networking/server.h>
 #include <networking/socket_communicator.h>
-#include <networking/subscriber.h>
 
 using namespace std::chrono_literals;
 
@@ -24,12 +25,12 @@ int main(int argc, char* argv[])
 
   server.BindAndListen(port_number);
 
-  networking::Subscriber subscriberA("SubscriberA");
-  networking::Subscriber subscriberB("SubscriberB");
+  std::shared_ptr<networking::DoubleVectorSubscriber> subscriberA = std::make_shared<networking::DoubleVectorSubscriber>("SubscriberA");
+  std::shared_ptr<networking::DoubleVectorSubscriber> subscriberB = std::make_shared<networking::DoubleVectorSubscriber>("SubscriberB");
 
   networking::Notifier notifier(server);
-  notifier.AddSubscriber(subscriberA, "SubscriberA");
-  notifier.AddSubscriber(subscriberB, "SubscriberB");
+  notifier.AddSubscriber<std::vector<double>>(subscriberA, "SubscriberA");
+  notifier.AddSubscriber<std::vector<double>>(subscriberB, "SubscriberB");
 
   std::thread cli_thread([&notifier](){
     std::string input = "";

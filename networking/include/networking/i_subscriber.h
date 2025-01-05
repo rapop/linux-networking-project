@@ -1,13 +1,12 @@
 #pragma once
 
-#include <vector>
-
 namespace networking {
 
+template <typename CallbackType>
 struct ISubscriber
 {
   virtual ~ISubscriber() = default;
-  virtual void Callback(const std::vector<double>& position) const = 0;
+  virtual void Callback(const CallbackType& data) const = 0;
 };
 
 } // namespace networking

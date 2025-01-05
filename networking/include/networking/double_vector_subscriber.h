@@ -6,11 +6,11 @@
 #include <networking/i_subscriber.h>
 
 namespace networking {
-  
-class Subscriber : public ISubscriber
+
+class DoubleVectorSubscriber : public ISubscriber<std::vector<double>>
 {
 public:
-  Subscriber(const std::string subscriber_name);
+  DoubleVectorSubscriber(const std::string subscriber_name);
   void Callback(const std::vector<double>& position) const override;
 private:
   const std::string subscriber_name_;

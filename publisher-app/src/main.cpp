@@ -6,7 +6,6 @@
 #include <networking/client.h>
 #include <networking/publisher.h>
 #include <networking/socket_communicator.h>
-#include <networking/subscriber.h>
 
 using namespace std::chrono_literals;
 
