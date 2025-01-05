@@ -12,6 +12,7 @@
 
 namespace networking
 {
+  using serializer::MsgTypes;
 
   Notifier::Notifier(IServer &server) : server_(server)
   {
@@ -19,12 +20,13 @@ namespace networking
 
   void Notifier::Receive()
   {
+    
     const auto packet = server_.Read();
-    const serializer::MsgType packet_type = serializer::unpackType(packet);
+    const MsgTypes packet_type = serializer::unpackType(packet);
 
-    if (packet_type == serializer::MsgType::CharVectorType)
+    if (packet_type == MsgTypes::StopSubscriberMsg)
     {
-      const std::vector<char> subscriber_name = serializer::unpackVector<char>(packet);
+      const std::vector<char> subscriber_name = serializer::unpackVector<MsgTypes::StopSubscriberMsg>(packet);
       const std::string subscriber_name_str(subscriber_name.begin(), subscriber_name.end());
 
       auto subscriber_it = subscribers_.find(subscriber_name_str);
@@ -39,9 +41,9 @@ namespace networking
         throw std::runtime_error(std::format("Cannot remove subscriber with name {}", subscriber_name_str));
       }
     }
-    else if (packet_type == serializer::MsgType::DoubleVectorType)
+    else if (packet_type == MsgTypes::PositionCommandMsg)
     {
-      const std::vector<double> position = serializer::unpackVector<double>(packet);
+      const std::vector<double> position = serializer::unpackVector<MsgTypes::PositionCommandMsg>(packet);
       NotifySubscribers<std::vector<double>>(position);
     }
     else
@@ -52,7 +54,7 @@ namespace networking
 
   void Notifier::SendAndStopStream()
   {
-    server_.Write(serializer::pack<char>(static_cast<char>(CmdTypes::StopPositionStream)));
+    server_.Write(serializer::pack<MsgTypes::CharType>(static_cast<char>(CmdTypes::StopPositionStream)));
   }
 
   void Notifier::AddSubscriber(const ISubscriber& subscriber, const std::string& subscriber_name)

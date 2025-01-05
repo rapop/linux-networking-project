@@ -11,13 +11,13 @@
 namespace serializer {
 
 // packet = data type code + length + msg
-template <typename DataType>
+template <MsgTypes MsgType, typename DataType = MsgTypeTrait<MsgType>>
 std::vector<uint8_t> pack(const DataType& data)
 {
   std::vector<uint8_t> buffer;
   buffer.resize(2 + sizeof(DataType));
 
-  const uint8_t int_type_code = static_cast<uint8_t>(ToMsgType<DataType>);
+  const uint8_t int_type_code = static_cast<uint8_t>(ToMsgTypeCode<MsgType>);
 
   std::memcpy(buffer.data(), &int_type_code, sizeof(int_type_code));
   std::size_t offset = sizeof(int_type_code);
@@ -32,20 +32,20 @@ std::vector<uint8_t> pack(const DataType& data)
   return buffer;
 }
 
-MsgType unpackType(const std::vector<uint8_t>& packet)
+MsgTypes unpackType(const std::vector<uint8_t>& packet)
 {
   if (packet.empty()) 
   {
     throw std::invalid_argument("Cannot unpack type of empty packet.");
   }
-  return static_cast<MsgType>(packet[0]);
+  return static_cast<MsgTypes>(packet[0]);
 }
 
-template <typename DataType>
+template <MsgTypes MsgType, typename DataType = MsgTypeTrait<MsgType>>
 DataType unpack(const std::vector<uint8_t>& packet)
 {
-  MsgType msg_type = unpackType(packet);
-  if (ToMsgType<DataType> != msg_type)
+  MsgTypes msg_type = unpackType(packet);
+  if (MsgType != msg_type)
   {
     throw std::runtime_error("Trying to unpack packet to wrong type.");
   }
@@ -64,7 +64,7 @@ DataType unpack(const std::vector<uint8_t>& packet)
   return data;
 }
 
-template <typename DataType>
+template <MsgTypes MsgType, typename DataType = MsgTypeTrait<MsgType>>
 std::vector<uint8_t> packVector(const std::vector<DataType>& data)
 {
   const uint8_t message_length = sizeof(DataType)*data.size();
@@ -72,7 +72,7 @@ std::vector<uint8_t> packVector(const std::vector<DataType>& data)
   std::vector<uint8_t> buffer;
   buffer.resize(2 + message_length);
     
-  const uint8_t int_type_code = static_cast<uint8_t>(ToMsgType<std::vector<DataType>>);
+  const uint8_t int_type_code = static_cast<uint8_t>(ToMsgTypeCode<MsgType>);
   std::memcpy(buffer.data(), &int_type_code, sizeof(int_type_code));
 
   std::size_t offset = sizeof(int_type_code);
@@ -85,11 +85,11 @@ std::vector<uint8_t> packVector(const std::vector<DataType>& data)
   return buffer;
 }
 
-template <typename DataType>
+template <MsgTypes MsgType, typename DataType = MsgTypeTrait<MsgType>>
 std::vector<DataType> unpackVector(const std::vector<uint8_t>& packet)
 {
-  MsgType msg_type = unpackType(packet);
-  if (ToMsgType<std::vector<DataType>> != msg_type)
+  MsgTypes msg_type = unpackType(packet);
+  if (MsgType != msg_type)
   {
     throw std::runtime_error("Trying to unpack packet to wrong type.");
   }
