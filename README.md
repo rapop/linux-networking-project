@@ -49,6 +49,7 @@ In the notifier-app CLI enter `stop` to send a stop request to the publisher for
 ## Notes
 
 [https://www.linuxhowtos.org/C_C++/socket.htm](https://www.linuxhowtos.org/C_C++/socket.htm)
+[https://habr.com/en/articles/779176/](https://habr.com/en/articles/779176/)
 
 ## Linux
 
