@@ -1,5 +1,11 @@
 # linux-networking-project
 
+![](doc/demo.gif)
+
+## UML Class Diagram
+
+![Alt text](doc/uml.png)
+
 ## Prerequists
 
 - GCC 13
@@ -80,7 +86,3 @@ To keep in mind when working on different architecture. The most representative 
 ### Reconnection, heartbeats
 
 We could add a permanent heartbeats stream, so that when one side disconnect, the other side will enter into reconnection mode.
-
-### Msg types
-
-Msg types should ideally represent concrete commands like `PositionCommandMsg` instead of `DoubleVectorType` if we want to support multiple msg that should be deserialized as a vector of doubles. We should embed this command in the packet instead.  
